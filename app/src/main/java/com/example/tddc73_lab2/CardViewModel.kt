@@ -2,7 +2,6 @@ package com.example.tddc73_lab2
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -13,6 +12,12 @@ import kotlinx.coroutines.flow.update
 enum class CardSide {
     Front,
     Back
+}
+
+enum class CardFocus {
+    CardName,
+    CardHolder,
+    CardExpires,
 }
 
 data class MyState(val side: CardSide = CardSide.Front, val cardNumber: String = "#### #### #### ####")
@@ -26,6 +31,12 @@ class CardViewModel {
 
     var numberFocused by mutableStateOf(false)
 
+    var cardHolder by mutableStateOf("")
+        private set
+
+    var cardCvv by mutableStateOf("")
+        private set
+
     fun changeCardSide() {
         _uiState.update { currentState ->
             when (currentState.side) {
@@ -36,15 +47,18 @@ class CardViewModel {
     }
 
     fun changeCardNumber(number: String) {
-        println(number.length)
         cardNumber = number
-
-        if (cardNumber.length % 4 == 0 && cardNumber.isNotEmpty()) {
-            cardNumber.padEnd(1, ' ')
-        }
     }
 
-    fun setNumberFocus(isFocused:Boolean){
+    fun changeCardHolder(name: String) {
+        cardHolder = name
+    }
+
+    fun changeCardCvv(cvv: String) {
+        cardCvv = cvv
+    }
+
+    fun setNumberFocus(isFocused: Boolean) {
         numberFocused = isFocused
     }
 }

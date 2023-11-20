@@ -93,7 +93,7 @@ fun RotatingCard(viewModel: CardViewModel) {
                 modifier = Modifier
                     .matchParentSize()
             ) {
-                FrontSide(viewModel.cardNumber, viewModel.numberFocused)
+                FrontSide(viewModel.cardNumber,viewModel.numberFocused,viewModel.cardHolder)
             }
         }
     }
@@ -102,16 +102,13 @@ fun RotatingCard(viewModel: CardViewModel) {
 
 
 @Composable
-fun FrontSide(number: String, isFocused: Boolean) {
+fun FrontSide(number: String, name: String,isFocused: Boolean ) {
 
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .padding(22.dp)
-            .fillMaxSize(),
-
-
-        //.background(Color.Black)
+            .fillMaxSize()
     ) {
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             Image(
@@ -127,7 +124,7 @@ fun FrontSide(number: String, isFocused: Boolean) {
             )
         }
         Text(
-            text = number,
+            text = formatText(number),
             color = Color.White,
             fontWeight = FontWeight(600),
             fontFamily = FontFamily.Monospace,
@@ -136,7 +133,7 @@ fun FrontSide(number: String, isFocused: Boolean) {
         )
 
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            TextWithTitle(title = "Card Holder", text = "Victor Imark")
+            TextWithTitle(title = "Card Holder", text = name)
             TextWithTitle(title = "Expires", text = "MM/YY")
         }
     }
