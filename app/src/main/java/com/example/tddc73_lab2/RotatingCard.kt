@@ -93,7 +93,7 @@ fun RotatingCard(viewModel: CardViewModel) {
                 modifier = Modifier
                     .matchParentSize()
             ) {
-                FrontSide(viewModel.cardNumber,viewModel.numberFocused,viewModel.cardHolder)
+                FrontSide(viewModel.cardNumber, viewModel.cardHolder, viewModel.numberFocused, )
             }
         }
     }

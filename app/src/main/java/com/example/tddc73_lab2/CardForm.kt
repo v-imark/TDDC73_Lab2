@@ -72,17 +72,21 @@ fun CustomTextField(
 ) {
     val focusRequester = remember { FocusRequester() }
     OutlinedTextField(
-        value = viewModel.cardNumber,
-        onValueChange = { number ->  viewModel.changeCardNumber(number)},
-        label = { Text("Card Number") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-        modifier = Modifier.fillMaxWidth()
-            .focusRequester(focusRequester)
-            .onFocusChanged{ if (it.isFocused) {
-                viewModel.setNumberFocus(true)
-            } else {
-                viewModel.setNumberFocus(false)
-            } },
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+            capitalization = capitalization
+        ),
+        visualTransformation = visualTransformation,
+        modifier = modifier.fillMaxWidth()
+            //.focusRequester(focusRequester)
+            //.onFocusChanged{ if (it.isFocused) {
+             //   viewModel.setNumberFocus(true)
+            //} else {
+             //   viewModel.setNumberFocus(false)
+            //} },
 
     )
 }
