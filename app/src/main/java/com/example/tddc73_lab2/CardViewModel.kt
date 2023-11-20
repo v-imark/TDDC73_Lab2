@@ -14,6 +14,12 @@ enum class CardSide {
     Back
 }
 
+enum class CardFocus {
+    CardName,
+    CardHolder,
+    CardExpires,
+}
+
 data class MyState(val side: CardSide = CardSide.Front, val cardNumber: String = "#### #### #### ####")
 
 class CardViewModel {
@@ -21,6 +27,12 @@ class CardViewModel {
     val uiState = _uiState.asStateFlow()
 
     var cardNumber by mutableStateOf("")
+        private set
+
+    var cardHolder by mutableStateOf("")
+        private set
+
+    var cardCvv by mutableStateOf("")
         private set
 
     fun changeCardSide() {
@@ -33,11 +45,15 @@ class CardViewModel {
     }
 
     fun changeCardNumber(number: String) {
-        println(number.length)
         cardNumber = number
-
-        if (cardNumber.length % 4 == 0 && cardNumber.isNotEmpty()) {
-            cardNumber.padEnd(1, ' ')
-        }
     }
+
+    fun changeCardHolder(name: String) {
+        cardHolder = name
+    }
+
+    fun changeCardCvv(cvv: String) {
+        cardCvv = cvv
+    }
+
 }
