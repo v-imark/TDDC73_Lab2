@@ -3,7 +3,9 @@ package com.example.tddc73_lab2
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -91,7 +93,7 @@ fun RotatingCard(viewModel: CardViewModel) {
                 modifier = Modifier
                     .matchParentSize()
             ) {
-                FrontSide(viewModel.cardNumber)
+                FrontSide(viewModel.cardNumber, viewModel.numberFocused)
             }
         }
     }
@@ -100,13 +102,15 @@ fun RotatingCard(viewModel: CardViewModel) {
 
 
 @Composable
-fun FrontSide(number: String) {
+fun FrontSide(number: String, isFocused: Boolean) {
 
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .padding(22.dp)
-            .fillMaxSize()
+            .fillMaxSize(),
+
+
         //.background(Color.Black)
     ) {
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
@@ -128,6 +132,7 @@ fun FrontSide(number: String) {
             fontWeight = FontWeight(600),
             fontFamily = FontFamily.Monospace,
             fontSize = 6.em,
+            modifier = addBorder(isFocused),
         )
 
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
@@ -136,6 +141,14 @@ fun FrontSide(number: String) {
         }
     }
 
+}
+
+fun addBorder(isFocused:Boolean): Modifier {
+    if(isFocused){
+        return Modifier.border(BorderStroke(2.dp, Color.White))
+    }else{
+      return Modifier.border(BorderStroke(0.dp, Color.White))
+    }
 }
 
 @Composable

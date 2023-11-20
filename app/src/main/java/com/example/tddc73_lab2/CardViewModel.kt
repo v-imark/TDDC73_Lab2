@@ -2,6 +2,7 @@ package com.example.tddc73_lab2
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,8 @@ class CardViewModel {
     var cardNumber by mutableStateOf("")
         private set
 
+    var numberFocused by mutableStateOf(false)
+
     fun changeCardSide() {
         _uiState.update { currentState ->
             when (currentState.side) {
@@ -39,5 +42,9 @@ class CardViewModel {
         if (cardNumber.length % 4 == 0 && cardNumber.isNotEmpty()) {
             cardNumber.padEnd(1, ' ')
         }
+    }
+
+    fun setNumberFocus(isFocused:Boolean){
+        numberFocused = isFocused
     }
 }

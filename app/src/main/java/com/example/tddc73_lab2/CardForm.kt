@@ -14,8 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
@@ -28,6 +32,7 @@ fun CardForm(viewModel: CardViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextField(viewModel: CardViewModel) {
+    val focusRequester = remember { FocusRequester() }
 
     OutlinedTextField(
         value = viewModel.cardNumber,
@@ -35,5 +40,12 @@ fun CustomTextField(viewModel: CardViewModel) {
         label = { Text("Card Number") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
         modifier = Modifier.fillMaxWidth()
+            .focusRequester(focusRequester)
+            .onFocusChanged{ if (it.isFocused) {
+                viewModel.setNumberFocus(true)
+            } else {
+                viewModel.setNumberFocus(false)
+            } },
+
     )
 }
