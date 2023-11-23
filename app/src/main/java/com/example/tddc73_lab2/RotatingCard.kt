@@ -3,7 +3,9 @@ package com.example.tddc73_lab2
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -91,7 +93,7 @@ fun RotatingCard(viewModel: CardViewModel) {
                 modifier = Modifier
                     .matchParentSize()
             ) {
-                FrontSide(viewModel.cardNumber, viewModel.cardHolder)
+                FrontSide(viewModel.cardNumber, viewModel.cardHolder, viewModel.numberFocused, )
             }
         }
     }
@@ -100,7 +102,7 @@ fun RotatingCard(viewModel: CardViewModel) {
 
 
 @Composable
-fun FrontSide(number: String, name: String) {
+fun FrontSide(number: String, name: String,isFocused: Boolean ) {
 
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
@@ -135,6 +137,14 @@ fun FrontSide(number: String, name: String) {
         }
     }
 
+}
+
+fun addBorder(isFocused:Boolean): Modifier {
+    if(isFocused){
+        return Modifier.border(BorderStroke(2.dp, Color.White))
+    }else{
+      return Modifier.border(BorderStroke(0.dp, Color.White))
+    }
 }
 
 @Composable

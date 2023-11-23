@@ -29,6 +29,8 @@ class CardViewModel {
     var cardNumber by mutableStateOf("")
         private set
 
+    var numberFocused by mutableStateOf(false)
+
     var cardHolder by mutableStateOf("")
         private set
 
@@ -56,4 +58,7 @@ class CardViewModel {
         cardCvv = cvv
     }
 
+    fun setNumberFocus(isFocused: Boolean) {
+        numberFocused = isFocused
+    }
 }
