@@ -129,6 +129,7 @@ fun FrontSide(number: String, name: String,isFocused: Boolean ) {
             fontWeight = FontWeight(600),
             fontFamily = FontFamily.Monospace,
             fontSize = 6.em,
+            modifier = addBorder(isFocused),
         )
 
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
