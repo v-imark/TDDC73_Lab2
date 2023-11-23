@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,9 +36,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import kotlin.random.Random
 
 @Composable
 fun RotatingCard(viewModel: CardViewModel) {
@@ -65,6 +64,7 @@ fun RotatingCard(viewModel: CardViewModel) {
             )
             .shadow(elevation = 20.dp, shape = RoundedCornerShape(8))
             .clip(RoundedCornerShape(8))
+            .zIndex(1.0f)
     ) {
         Image(
             painter = painterResource(id = R.drawable._10),
@@ -79,21 +79,19 @@ fun RotatingCard(viewModel: CardViewModel) {
                 .fillMaxWidth()
         )
         if (deg > 90.0f) {
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
+            Box(
                 modifier = Modifier
-                    .zIndex(1.0f)
+                    .matchParentSize()
                     .graphicsLayer(rotationY = 180.0f)
             ) {
-                Text("Back", color = Color.White, fontSize = 30.sp)
+                BackSide(viewModel)
             }
         } else {
             Box(
                 modifier = Modifier
                     .matchParentSize()
             ) {
-                FrontSide(viewModel.cardNumber, viewModel.cardHolder, viewModel.numberFocused, )
+                FrontSide(viewModel)
             }
         }
     }
@@ -102,7 +100,7 @@ fun RotatingCard(viewModel: CardViewModel) {
 
 
 @Composable
-fun FrontSide(number: String, name: String,isFocused: Boolean ) {
+fun FrontSide(viewModel: CardViewModel) {
 
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
@@ -124,27 +122,30 @@ fun FrontSide(number: String, name: String,isFocused: Boolean ) {
             )
         }
         Text(
-            text = formatText(number),
+            text = formatText(viewModel.cardNumber),
             color = Color.White,
             fontWeight = FontWeight(600),
             fontFamily = FontFamily.Monospace,
             fontSize = 6.em,
-            modifier = addBorder(isFocused),
+            modifier = addBorder(viewModel.numberFocused),
         )
 
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            TextWithTitle(title = "Card Holder", text = name)
-            TextWithTitle(title = "Expires", text = "MM/YY")
+            TextWithTitle(title = "Card Holder", text = viewModel.cardHolder)
+            TextWithTitle(
+                title = "Expires",
+                text = "${viewModel.cardMonth}/${viewModel.cardYear.takeLast(2)}"
+            )
         }
     }
 
 }
 
-fun addBorder(isFocused:Boolean): Modifier {
-    if(isFocused){
-        return Modifier.border(BorderStroke(2.dp, Color.White))
-    }else{
-      return Modifier.border(BorderStroke(0.dp, Color.White))
+fun addBorder(isFocused: Boolean): Modifier {
+    return if (isFocused) {
+        Modifier.border(BorderStroke(2.dp, Color.White))
+    } else {
+        Modifier.border(BorderStroke(0.dp, Color.White))
     }
 }
 
@@ -168,3 +169,32 @@ fun TextWithTitle(title: String, text: String) {
         )
     }
 }
+
+@Composable
+fun BackSide(viewModel: CardViewModel) {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 22.dp)
+            .fillMaxSize()
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .alpha(0.8f)
+                .background(Color.Black)
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1.5f)
+        ) {}
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1.5f)
+        ) {}
+
+    }
+}
+
