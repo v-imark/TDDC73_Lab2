@@ -7,10 +7,13 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+//import androidx.compose.foundation.layout.ColumnScopeInstance.weight
 import androidx.compose.foundation.layout.Row
+//import androidx.compose.foundation.layout.RowScopeInstance.weight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -101,7 +104,20 @@ fun RotatingCard(viewModel: CardViewModel) {
 
 @Composable
 fun FrontSide(viewModel: CardViewModel) {
-
+    fun getCardType(): Int {
+        var number = viewModel.cardNumber
+        var re = Regex("^4")
+        if (number.matches(re)) return R.drawable.visa
+        re = Regex("^(34|37)")
+        if (number.matches(re)) return R.drawable.amex
+        re = Regex("^5[1-5]")
+        if (number.matches(re)) return R.drawable.mastercard
+        re = Regex("^6011")
+        if (number.matches(re)) return R.drawable.discover
+        re = Regex("^9792")
+        if (number.matches(re)) return R.drawable.troy
+        return R.drawable.visa
+    }
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
@@ -116,60 +132,65 @@ fun FrontSide(viewModel: CardViewModel) {
                 modifier = Modifier.height(50.dp)
             )
             Image(
-                painter = painterResource(id = R.drawable.visa),
+                painter = painterResource(id = getCardType()),
                 contentDescription = "Visa",
-                modifier = Modifier.height(50.dp)
-            )
+                modifier = Modifier.height(50.dp))
         }
-        Text(
-            text = formatText(viewModel.cardNumber),
-            color = Color.White,
-            fontWeight = FontWeight(600),
-            fontFamily = FontFamily.Monospace,
-            fontSize = 6.em,
-            modifier = addBorder(viewModel.numberFocused),
+        TextWithTitle(
+          title = "Card Number",
+          text = formatText(viewModel.cardNumber) ,
+            modifier = addBorder(CardFocus.CardNumber, viewModel.currentFocus).
+            fillMaxWidth().clickable { viewModel.setFocus(CardFocus.CardNumber) },
         )
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth() ) {
+            TextWithTitle(
+                title = "Card Holder",
+                text = viewModel.cardHolder,
+                modifier = addBorder(CardFocus.CardHolder, viewModel.currentFocus)
+                    .weight(3f).fillMaxWidth().clickable { viewModel.setFocus(CardFocus.CardHolder) },
+                )
 
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            TextWithTitle(title = "Card Holder", text = viewModel.cardHolder)
             TextWithTitle(
                 title = "Expires",
-                text = "${viewModel.cardMonth}/${viewModel.cardYear.takeLast(2)}"
-            )
+                text = "${viewModel.cardMonth}/${viewModel.cardYear.takeLast(2)}".padStart(3, ' '),
+                modifier = addBorder(CardFocus.CardExpires, viewModel.currentFocus).clickable { viewModel.setFocus(CardFocus.CardExpires) }
+
+                )
         }
-    }
-
-}
-
-fun addBorder(isFocused: Boolean): Modifier {
-    return if (isFocused) {
-        Modifier.border(BorderStroke(2.dp, Color.White))
-    } else {
-        Modifier.border(BorderStroke(0.dp, Color.White))
     }
 }
 
 @Composable
-fun TextWithTitle(title: String, text: String) {
-    Column {
-        Text(
-            text = title,
-            color = Color.White,
-            fontWeight = FontWeight(600),
-            fontFamily = FontFamily.Monospace,
-            fontSize = 3.2.em,
-            modifier = Modifier.alpha(0.7f)
-        )
-        Text(
-            text = text.uppercase(),
-            color = Color.White,
-            fontWeight = FontWeight(600),
-            fontFamily = FontFamily.Monospace,
-            fontSize = 4.5.em,
-        )
+fun TextWithTitle(title: String, text: String, modifier: Modifier) {
+
+    Column(
+        modifier = modifier.padding(7.dp),
+    ) {
+            Text(
+                text = title,
+                color = Color.White,
+                fontWeight = FontWeight(600),
+                fontFamily = FontFamily.Monospace,
+                fontSize = 3.2.em,
+
+            )
+            Text(
+                text = text.uppercase(),
+                color = Color.White,
+                fontWeight = FontWeight(600),
+                fontFamily = FontFamily.Monospace,
+                fontSize = 4.5.em,
+
+            )
     }
 }
-
+fun addBorder(isFocused: CardFocus, inputField: CardFocus): Modifier {
+    return if (inputField == isFocused) {
+        Modifier.border(BorderStroke(2.dp, Color.White), shape = RoundedCornerShape(10.dp))
+    } else {
+        Modifier.border(BorderStroke(0.dp, Color.Transparent))
+    }
+}
 @Composable
 fun BackSide(viewModel: CardViewModel) {
     Column(

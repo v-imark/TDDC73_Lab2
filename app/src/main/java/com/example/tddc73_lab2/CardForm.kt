@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -35,6 +36,7 @@ fun CardForm(viewModel: CardViewModel) {
     val months = (1..12).map { it.toString().padStart(2, '0') }
     val currentYear = Year.now().value
     val years = (currentYear..currentYear + 10).map { it.toString() }
+    val focusRequester = remember { FocusRequester() }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -45,13 +47,19 @@ fun CardForm(viewModel: CardViewModel) {
             value = viewModel.cardNumber,
             onValueChange = { number -> viewModel.changeCardNumber(number) },
             visualTransformation = { text -> creditCardViewTranslator(text) },
-            keyboardType = KeyboardType.NumberPassword
+            keyboardType = KeyboardType.NumberPassword,
+            modifier = Modifier
+            .onFocusChanged{ if (it.isFocused) {
+                viewModel.setFocus(CardFocus.CardNumber)} },
         )
         CustomTextField(
             label = "Card Holder",
             value = viewModel.cardHolder,
             onValueChange = { name -> viewModel.changeCardHolder(name) },
-            capitalization = KeyboardCapitalization.Characters
+            capitalization = KeyboardCapitalization.Characters,
+                    modifier = Modifier
+                    .onFocusChanged{ if (it.isFocused) {
+                viewModel.setFocus(CardFocus.CardHolder)} },
         )
         Row(
             modifier = Modifier
@@ -61,14 +69,18 @@ fun CardForm(viewModel: CardViewModel) {
             CustomDropdownMenu(
                 label = "Month",
                 value = viewModel.cardMonth,
-                modifier = Modifier.weight(2f),
+                modifier = Modifier.weight(2f)
+                    .onFocusChanged{ if (it.isFocused) {
+                    viewModel.setFocus(CardFocus.CardExpires)} },
                 list = months,
-                onSelect = { month -> viewModel.changeCardMonth(month) }
+                onSelect = { month -> viewModel.changeCardMonth(month) },
+
             )
             CustomDropdownMenu(
                 label = "Year",
                 value = viewModel.cardYear,
-                modifier = Modifier.weight(2f),
+                modifier = Modifier.weight(2f).onFocusChanged{ if (it.isFocused) {
+                    viewModel.setFocus(CardFocus.CardExpires)} },
                 list = years,
                 onSelect = { year -> viewModel.changeCardYear(year) }
             )
@@ -102,7 +114,6 @@ fun CustomTextField(
     readOnly: Boolean = false,
     trailingIcon: @Composable() (() -> Unit)? = null
 ) {
-    val focusRequester = remember { FocusRequester() }
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -115,13 +126,6 @@ fun CustomTextField(
         modifier = modifier.fillMaxWidth(),
         readOnly = readOnly,
         trailingIcon = trailingIcon,
-        //.focusRequester(focusRequester)
-        //.onFocusChanged{ if (it.isFocused) {
-        //   viewModel.setNumberFocus(true)
-        //} else {
-        //   viewModel.setNumberFocus(false)
-        //} },
-
 
     )
 }

@@ -13,21 +13,25 @@ enum class CardSide {
 }
 
 enum class CardFocus {
-    CardName,
+    CardNumber,
     CardHolder,
     CardExpires,
 }
 
 data class MyState(val side: CardSide = CardSide.Front)
 
+
 class CardViewModel {
     private val _uiState = MutableStateFlow(MyState())
     val uiState = _uiState.asStateFlow()
 
-    var cardNumber by mutableStateOf("")
+    var bankShown by mutableStateOf(R.drawable.visa)
+        private set
+    var currentFocus by mutableStateOf(CardFocus.CardNumber)
         private set
 
-    var numberFocused by mutableStateOf(false)
+    var cardNumber by mutableStateOf("")
+        private set
 
     var cardHolder by mutableStateOf("")
         private set
@@ -49,6 +53,11 @@ class CardViewModel {
         }
     }
 
+     fun setFocus(boxToFocus: CardFocus) {
+        currentFocus = boxToFocus
+
+    }
+
     fun changeCardNumber(number: String) {
         cardNumber = number
     }
@@ -61,15 +70,15 @@ class CardViewModel {
         cardCvv = cvv
     }
 
-    fun setNumberFocus(isFocused: Boolean) {
-        numberFocused = isFocused
-    }
-
     fun changeCardMonth(month: String) {
         cardMonth = month
     }
 
     fun changeCardYear(year: String) {
         cardYear = year
+    }
+
+    fun changeBankShown(bankRef: Int){
+        bankShown = bankRef
     }
 }
