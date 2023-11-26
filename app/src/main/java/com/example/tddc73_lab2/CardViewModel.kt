@@ -2,7 +2,9 @@ package com.example.tddc73_lab2
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.FocusRequester
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -13,6 +15,7 @@ enum class CardSide {
 }
 
 enum class CardFocus {
+    NoFocus,
     CardNumber,
     CardHolder,
     CardExpires,
@@ -24,6 +27,10 @@ data class MyState(val side: CardSide = CardSide.Front)
 class CardViewModel {
     private val _uiState = MutableStateFlow(MyState())
     val uiState = _uiState.asStateFlow()
+
+    var cardNumberFocusRequester = FocusRequester()
+    var cardHolderFocusRequester = FocusRequester()
+    var expiresFocusRequester = FocusRequester()
 
     var bankShown by mutableStateOf(R.drawable.visa)
         private set
