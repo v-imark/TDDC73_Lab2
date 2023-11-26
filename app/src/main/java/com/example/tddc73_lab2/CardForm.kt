@@ -61,8 +61,8 @@ fun CardForm(viewModel: CardViewModel) {
             onValueChange = { name -> viewModel.changeCardHolder(name) },
             capitalization = KeyboardCapitalization.Characters,
             modifier = Modifier.onFocusChanged{ if (it.isFocused) {
-                       viewModel.setFocus(CardFocus.CardHolder)} }
-                        .focusProperties { next = viewModel.expiresFocusRequester },
+                       viewModel.setFocus(CardFocus.CardHolder)} }.focusRequester(viewModel.cardHolderFocusRequester)
+
         )
         Row(
             modifier = Modifier
