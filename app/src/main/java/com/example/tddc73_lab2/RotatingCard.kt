@@ -3,6 +3,7 @@ package com.example.tddc73_lab2
 //import androidx.compose.foundation.layout.ColumnScopeInstance.weight
 //import androidx.compose.foundation.layout.RowScopeInstance.weight
 import AnimatedLogo
+import android.text.Layout
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -14,6 +15,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,23 +27,32 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultCameraDistance
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.zIndex
@@ -107,13 +118,18 @@ fun RotatingCard(viewModel: CardViewModel) {
             }
         }
     }
-
 }
-
 
 @Composable
 fun FrontSide(viewModel: CardViewModel) {
     val focusManager = LocalFocusManager.current
+    var cardNumberSize by remember { mutableStateOf(IntSize.Zero) }
+    var cardNumberOffset by remember { mutableStateOf(Offset.Zero) }
+    var cardHolderSize by remember { mutableStateOf(IntSize.Zero) }
+    var cardHolderOffset by remember { mutableStateOf(Offset.Zero) }
+    var cardExpiresSize by remember { mutableStateOf(IntSize.Zero) }
+    var cardExpiresOffset by remember { mutableStateOf(Offset.Zero) }
+
 
     fun handleFocus(cardFocus: CardFocus, requester: FocusRequester) {
         if (viewModel.currentFocus == cardFocus) {
@@ -124,12 +140,15 @@ fun FrontSide(viewModel: CardViewModel) {
             requester.requestFocus()
         }
     }
-
+    AnimatedBorder(viewModel.currentFocus,
+        cardNumberOffset, cardNumberSize,
+        cardHolderOffset, cardHolderSize,
+        cardExpiresOffset, cardExpiresSize)
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
-            .padding(22.dp)
             .fillMaxSize()
+            .padding(22.dp)
     ) {
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             Image(
@@ -140,6 +159,7 @@ fun FrontSide(viewModel: CardViewModel) {
             )
             AnimatedLogo(imageId = viewModel.bankShown)
         }
+
         /*TextWithTitle(
           title = "Card Number",
           text = formatText(viewModel.cardNumber) ,
@@ -149,8 +169,12 @@ fun FrontSide(viewModel: CardViewModel) {
         AnimatedText(
             text = formatText(viewModel.cardNumber),
             placeholder = "#### #### #### ####",
-            fontSize = 5.7.em,
+            fontSize =5.7.em,
             modifier = addBorder(CardFocus.CardNumber, viewModel.currentFocus)
+                .onGloballyPositioned { coordinates ->
+                    cardNumberSize = coordinates.size
+                    cardNumberOffset = coordinates.positionInRoot()
+                }
                 .padding(vertical = 7.dp, horizontal = 12.dp)
                 .clickable {
                     handleFocus(
@@ -158,7 +182,6 @@ fun FrontSide(viewModel: CardViewModel) {
                         viewModel.cardNumberFocusRequester
                     )
                 },
-
             )
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             TextWithTitle(
@@ -167,6 +190,10 @@ fun FrontSide(viewModel: CardViewModel) {
                 modifier = addBorder(CardFocus.CardHolder, viewModel.currentFocus)
                     .weight(3f)
                     .fillMaxWidth()
+                    .onGloballyPositioned { coordinates ->
+                        cardHolderSize = coordinates.size
+                        cardHolderOffset = coordinates.positionInRoot()
+                    }
                     .clickable {
                         handleFocus(
                             CardFocus.CardHolder,
@@ -183,7 +210,11 @@ fun FrontSide(viewModel: CardViewModel) {
                 modifier = addBorder(CardFocus.CardExpires, viewModel.currentFocus)
                     .clickable {
                         handleFocus(CardFocus.CardExpires, viewModel.expiresFocusRequester)
-                    },
+                    }
+                    .onGloballyPositioned { coordinates ->
+                cardExpiresSize = coordinates.size
+                cardExpiresOffset = coordinates.positionInRoot()
+                },
                 placeholder = "MM/YY"
             )
         }
