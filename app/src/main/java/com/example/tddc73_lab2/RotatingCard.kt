@@ -134,56 +134,70 @@ fun FrontSide(viewModel: CardViewModel) {
             Image(
                 painter = painterResource(id = getCardType()),
                 contentDescription = "Visa",
-                modifier = Modifier.height(50.dp))
+                modifier = Modifier.height(50.dp)
+            )
         }
-        TextWithTitle(
+        /*TextWithTitle(
           title = "Card Number",
           text = formatText(viewModel.cardNumber) ,
             modifier = addBorder(CardFocus.CardNumber, viewModel.currentFocus).
             fillMaxWidth().clickable { viewModel.setFocus(CardFocus.CardNumber) },
+        )*/
+        AnimatedText(
+            text = formatText(viewModel.cardNumber),
+            placeholder = "#### #### #### ####",
+            fontSize = 5.7.em,
+            modifier = addBorder(CardFocus.CardNumber, viewModel.currentFocus)
+                .padding(vertical = 7.dp, horizontal = 12.dp)
         )
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth() ) {
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             TextWithTitle(
                 title = "Card Holder",
                 text = viewModel.cardHolder,
                 modifier = addBorder(CardFocus.CardHolder, viewModel.currentFocus)
-                    .weight(3f).fillMaxWidth().clickable { viewModel.setFocus(CardFocus.CardHolder) },
-                )
-
+                    .weight(3f)
+                    .fillMaxWidth()
+                    .clickable { viewModel.setFocus(CardFocus.CardHolder) },
+                placeholder = "              "
+            )
             TextWithTitle(
                 title = "Expires",
-                text = "${viewModel.cardMonth}/${viewModel.cardYear.takeLast(2)}".padStart(3, ' '),
-                modifier = addBorder(CardFocus.CardExpires, viewModel.currentFocus).clickable { viewModel.setFocus(CardFocus.CardExpires) }
-
-                )
+                text = "${viewModel.cardMonth.padStart(2, 'M')}/${viewModel.cardYear.takeLast(2)}",
+                modifier = addBorder(
+                    CardFocus.CardExpires,
+                    viewModel.currentFocus
+                ).clickable { viewModel.setFocus(CardFocus.CardExpires) },
+                placeholder = "MM/YY"
+            )
         }
     }
 }
 
 @Composable
-fun TextWithTitle(title: String, text: String, modifier: Modifier) {
+fun TextWithTitle(title: String, text: String, modifier: Modifier, placeholder: String = "") {
 
     Column(
         modifier = modifier.padding(7.dp),
     ) {
-            Text(
-                text = title,
-                color = Color.White,
-                fontWeight = FontWeight(600),
-                fontFamily = FontFamily.Monospace,
-                fontSize = 3.2.em,
+        Text(
+            text = title,
+            color = Color.White,
+            fontWeight = FontWeight(600),
+            fontFamily = FontFamily.Monospace,
+            fontSize = 3.2.em,
 
             )
-            Text(
-                text = text.uppercase(),
-                color = Color.White,
-                fontWeight = FontWeight(600),
-                fontFamily = FontFamily.Monospace,
-                fontSize = 4.5.em,
-
-            )
+        /*Text(
+            text = text.uppercase(),
+            color = Color.White,
+            fontWeight = FontWeight(600),
+            fontFamily = FontFamily.Monospace,
+            fontSize = 4.5.em,
+        )*/
+        AnimatedText(text = text.uppercase(), placeholder = placeholder, fontSize = 4.5.em)
     }
 }
+
 fun addBorder(isFocused: CardFocus, inputField: CardFocus): Modifier {
     return if (inputField == isFocused) {
         Modifier.border(BorderStroke(2.dp, Color.White), shape = RoundedCornerShape(10.dp))
@@ -191,6 +205,7 @@ fun addBorder(isFocused: CardFocus, inputField: CardFocus): Modifier {
         Modifier.border(BorderStroke(0.dp, Color.Transparent))
     }
 }
+
 @Composable
 fun BackSide(viewModel: CardViewModel) {
     Column(

@@ -18,6 +18,7 @@ enum class CardFocus {
     CardExpires,
 }
 
+
 data class MyState(val side: CardSide = CardSide.Front)
 
 
@@ -53,9 +54,8 @@ class CardViewModel {
         }
     }
 
-     fun setFocus(boxToFocus: CardFocus) {
+    fun setFocus(boxToFocus: CardFocus) {
         currentFocus = boxToFocus
-
     }
 
     fun changeCardNumber(number: String) {
@@ -78,7 +78,7 @@ class CardViewModel {
         cardYear = year
     }
 
-    fun changeBankShown(bankRef: Int){
+    fun changeBankShown(bankRef: Int) {
         bankShown = bankRef
     }
 }
