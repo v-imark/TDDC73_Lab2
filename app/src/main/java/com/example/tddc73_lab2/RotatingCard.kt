@@ -2,6 +2,7 @@ package com.example.tddc73_lab2
 
 //import androidx.compose.foundation.layout.ColumnScopeInstance.weight
 //import androidx.compose.foundation.layout.RowScopeInstance.weight
+import AnimatedLogo
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -34,7 +35,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultCameraDistance
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -111,20 +114,6 @@ fun RotatingCard(viewModel: CardViewModel) {
 @Composable
 fun FrontSide(viewModel: CardViewModel) {
     val focusManager = LocalFocusManager.current
-    fun getCardType(): Int {
-        var number = viewModel.cardNumber
-        var re = Regex("^4")
-        if (number.matches(re)) return R.drawable.visa
-        re = Regex("^(34|37)")
-        if (number.take(2).matches(re)) return R.drawable.amex
-        re = Regex("^5[1-5]")
-        if (number.matches(re)) return R.drawable.mastercard
-        re = Regex("^6011")
-        if (number.matches(re)) return R.drawable.discover
-        re = Regex("^9792")
-        if (number.matches(re)) return R.drawable.troy
-        return R.drawable.visa
-    }
 
     fun handleFocus(cardFocus: CardFocus, requester: FocusRequester) {
         if (viewModel.currentFocus == cardFocus) {
@@ -149,11 +138,7 @@ fun FrontSide(viewModel: CardViewModel) {
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier.height(50.dp)
             )
-            Image(
-                painter = painterResource(id = getCardType()),
-                contentDescription = "Visa",
-                modifier = Modifier.height(50.dp)
-            )
+            AnimatedLogo(imageId = viewModel.bankShown)
         }
         /*TextWithTitle(
           title = "Card Number",
@@ -167,6 +152,13 @@ fun FrontSide(viewModel: CardViewModel) {
             fontSize = 5.7.em,
             modifier = addBorder(CardFocus.CardNumber, viewModel.currentFocus)
                 .padding(vertical = 7.dp, horizontal = 12.dp)
+                .clickable {
+                    handleFocus(
+                        CardFocus.CardNumber,
+                        viewModel.cardNumberFocusRequester
+                    )
+                },
+
         )
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             TextWithTitle(
