@@ -1,6 +1,5 @@
 package com.example.tddc73_lab2
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,16 +21,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.core.view.ViewCompat.ScrollIndicators
 import java.time.Year
 
 @Composable
@@ -40,7 +35,7 @@ fun CardForm(viewModel: CardViewModel) {
     val currentYear = Year.now().value
     val years = (currentYear..currentYear + 10).map { it.toString() }
     val maxNumberLength = 16
-    fun getCardTyp(){
+    fun getCardTyp() {
         var number = viewModel.cardNumber
         var re = Regex("^4")
         if (number.matches(re)) viewModel.changeBankShown(R.drawable.visa)
@@ -61,22 +56,35 @@ fun CardForm(viewModel: CardViewModel) {
         CustomTextField(
             label = "Card Number",
             value = viewModel.cardNumber,
-            onValueChange = { number -> viewModel.changeCardNumber(number)
-                            getCardTyp()
-                            if(number.length == maxNumberLength){ viewModel.setFocus(CardFocus.CardHolder) }},
+            onValueChange = { number ->
+                viewModel.changeCardNumber(number)
+                getCardTyp()
+                if (number.length == maxNumberLength) {
+                    viewModel.setFocus(CardFocus.CardHolder)
+                }
+            },
             visualTransformation = { text -> creditCardViewTranslator(text) },
             keyboardType = KeyboardType.NumberPassword,
-            modifier = Modifier.focusRequester(viewModel.cardNumberFocusRequester)
-                .onFocusChanged{ if (it.isFocused) {
-                viewModel.setFocus(CardFocus.CardNumber)} },
+            modifier = Modifier
+                .focusRequester(viewModel.cardNumberFocusRequester)
+                .onFocusChanged {
+                    if (it.isFocused) {
+                        viewModel.setFocus(CardFocus.CardNumber)
+                    }
+                },
         )
         CustomTextField(
             label = "Card Holder",
             value = viewModel.cardHolder,
             onValueChange = { name -> viewModel.changeCardHolder(name) },
             capitalization = KeyboardCapitalization.Characters,
-            modifier = Modifier.onFocusChanged{ if (it.isFocused) {
-                       viewModel.setFocus(CardFocus.CardHolder)} }.focusRequester(viewModel.cardHolderFocusRequester)
+            modifier = Modifier
+                .onFocusChanged {
+                    if (it.isFocused) {
+                        viewModel.setFocus(CardFocus.CardHolder)
+                    }
+                }
+                .focusRequester(viewModel.cardHolderFocusRequester)
 
         )
         Row(
@@ -87,19 +95,28 @@ fun CardForm(viewModel: CardViewModel) {
             CustomDropdownMenu(
                 label = "Month",
                 value = viewModel.cardMonth,
-                modifier = Modifier.weight(2f)
-                    .onFocusChanged{ if (it.isFocused) {
-                    viewModel.setFocus(CardFocus.CardExpires)}}.focusRequester(viewModel.expiresFocusRequester),
+                modifier = Modifier
+                    .weight(2f)
+                    .onFocusChanged {
+                        if (it.isFocused) {
+                            viewModel.setFocus(CardFocus.CardExpires)
+                        }
+                    }
+                    .focusRequester(viewModel.expiresFocusRequester),
                 list = months,
                 onSelect = { month -> viewModel.changeCardMonth(month) },
 
-            )
+                )
             CustomDropdownMenu(
                 label = "Year",
                 value = viewModel.cardYear,
-                modifier = Modifier.weight(2f)
-                    .onFocusChanged{ if (it.isFocused) {
-                    viewModel.setFocus(CardFocus.CardExpires)} },
+                modifier = Modifier
+                    .weight(2f)
+                    .onFocusChanged {
+                        if (it.isFocused) {
+                            viewModel.setFocus(CardFocus.CardExpires)
+                        }
+                    },
                 list = years,
                 onSelect = { year -> viewModel.changeCardYear(year) }
             )
@@ -112,7 +129,7 @@ fun CardForm(viewModel: CardViewModel) {
                     },
                 label = "CVV",
                 value = viewModel.cardCvv,
-                onValueChange = { cvv -> if (cvv.length <= 3) viewModel.changeCardCvv(cvv) },
+                onValueChange = { cvv -> if (cvv.length <= 4) viewModel.changeCardCvv(cvv) },
                 keyboardType = KeyboardType.NumberPassword,
             )
 
@@ -146,7 +163,7 @@ fun CustomTextField(
         readOnly = readOnly,
         trailingIcon = trailingIcon,
 
-    )
+        )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -159,7 +176,7 @@ fun CustomDropdownMenu(
     onSelect: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    
+
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = it },

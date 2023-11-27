@@ -36,9 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultCameraDistance
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -161,7 +159,7 @@ fun FrontSide(viewModel: CardViewModel) {
                     )
                 },
 
-        )
+            )
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             TextWithTitle(
                 title = "Card Holder",
@@ -267,13 +265,14 @@ fun BackSide(viewModel: CardViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1.2f)
-                .padding(horizontal = 18.dp),
+                .padding(horizontal = 18.dp, vertical = 4.dp)
+                .alpha(0.5f),
             horizontalArrangement = Arrangement.End
         ) {
             Image(
                 painter = painterResource(id = viewModel.bankShown),
                 contentDescription = "backside bank",
-                modifier = Modifier.fillMaxHeight()
+                modifier = Modifier.fillMaxHeight(),
             )
         }
 
