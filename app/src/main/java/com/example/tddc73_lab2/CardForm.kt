@@ -40,6 +40,20 @@ fun CardForm(viewModel: CardViewModel) {
     val currentYear = Year.now().value
     val years = (currentYear..currentYear + 10).map { it.toString() }
     val maxNumberLength = 16
+    fun getCardTyp(){
+        var number = viewModel.cardNumber
+        var re = Regex("^4")
+        if (number.matches(re)) viewModel.changeBankShown(R.drawable.visa)
+        re = Regex("^(34|37)")
+        if (number.take(2).matches(re)) viewModel.changeBankShown(R.drawable.amex)
+        re = Regex("^5[1-5]")
+        if (number.matches(re)) viewModel.changeBankShown(R.drawable.mastercard)
+        re = Regex("^6011")
+        if (number.matches(re)) viewModel.changeBankShown(R.drawable.discover)
+        re = Regex("^9792")
+        if (number.matches(re)) return viewModel.changeBankShown(R.drawable.troy)
+
+    }
     Column(
         verticalArrangement = Arrangement.spacedBy(6.dp),
         modifier = Modifier.fillMaxWidth()
@@ -48,6 +62,7 @@ fun CardForm(viewModel: CardViewModel) {
             label = "Card Number",
             value = viewModel.cardNumber,
             onValueChange = { number -> viewModel.changeCardNumber(number)
+                            getCardTyp()
                             if(number.length == maxNumberLength){ viewModel.setFocus(CardFocus.CardHolder) }},
             visualTransformation = { text -> creditCardViewTranslator(text) },
             keyboardType = KeyboardType.NumberPassword,
