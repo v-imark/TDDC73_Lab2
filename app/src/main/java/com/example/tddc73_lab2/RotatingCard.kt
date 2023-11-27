@@ -1,5 +1,7 @@
 package com.example.tddc73_lab2
 
+//import androidx.compose.foundation.layout.ColumnScopeInstance.weight
+//import androidx.compose.foundation.layout.RowScopeInstance.weight
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -11,9 +13,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-//import androidx.compose.foundation.layout.ColumnScopeInstance.weight
 import androidx.compose.foundation.layout.Row
-//import androidx.compose.foundation.layout.RowScopeInstance.weight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,12 +28,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultCameraDistance
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -68,6 +70,10 @@ fun RotatingCard(viewModel: CardViewModel) {
             .shadow(elevation = 20.dp, shape = RoundedCornerShape(8))
             .clip(RoundedCornerShape(8))
             .zIndex(1.0f)
+            .clickable {
+                // When the card is clicked, focus the CardNumber text field
+                viewModel.setFocus(CardFocus.CardNumber)
+            }
     ) {
         Image(
             painter = painterResource(id = R.drawable._10),
@@ -104,12 +110,13 @@ fun RotatingCard(viewModel: CardViewModel) {
 
 @Composable
 fun FrontSide(viewModel: CardViewModel) {
+    val focusManager = LocalFocusManager.current
     fun getCardType(): Int {
         var number = viewModel.cardNumber
         var re = Regex("^4")
         if (number.matches(re)) return R.drawable.visa
         re = Regex("^(34|37)")
-        if (number.matches(re)) return R.drawable.amex
+        if (number.take(2).matches(re)) return R.drawable.amex
         re = Regex("^5[1-5]")
         if (number.matches(re)) return R.drawable.mastercard
         re = Regex("^6011")
@@ -118,6 +125,17 @@ fun FrontSide(viewModel: CardViewModel) {
         if (number.matches(re)) return R.drawable.troy
         return R.drawable.visa
     }
+
+    fun handleFocus(cardFocus: CardFocus, requester: FocusRequester) {
+        if (viewModel.currentFocus == cardFocus) {
+            focusManager.clearFocus()
+            viewModel.setFocus(CardFocus.NoFocus)
+        } else {
+            viewModel.setFocus(cardFocus)
+            requester.requestFocus()
+        }
+    }
+
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
@@ -157,16 +175,23 @@ fun FrontSide(viewModel: CardViewModel) {
                 modifier = addBorder(CardFocus.CardHolder, viewModel.currentFocus)
                     .weight(3f)
                     .fillMaxWidth()
-                    .clickable { viewModel.setFocus(CardFocus.CardHolder) },
-                placeholder = "              "
+                    .clickable {
+                        handleFocus(
+                            CardFocus.CardHolder,
+                            viewModel.cardHolderFocusRequester
+                        )
+                    },
+                placeholder = " ".padEnd(20)
+
             )
+
             TextWithTitle(
                 title = "Expires",
                 text = "${viewModel.cardMonth.padStart(2, 'M')}/${viewModel.cardYear.takeLast(2)}",
-                modifier = addBorder(
-                    CardFocus.CardExpires,
-                    viewModel.currentFocus
-                ).clickable { viewModel.setFocus(CardFocus.CardExpires) },
+                modifier = addBorder(CardFocus.CardExpires, viewModel.currentFocus)
+                    .clickable {
+                        handleFocus(CardFocus.CardExpires, viewModel.expiresFocusRequester)
+                    },
                 placeholder = "MM/YY"
             )
         }
@@ -174,7 +199,7 @@ fun FrontSide(viewModel: CardViewModel) {
 }
 
 @Composable
-fun TextWithTitle(title: String, text: String, modifier: Modifier, placeholder: String = "") {
+fun TextWithTitle(title: String, text: String, modifier: Modifier, placeholder: String) {
 
     Column(
         modifier = modifier.padding(7.dp),
@@ -187,18 +212,12 @@ fun TextWithTitle(title: String, text: String, modifier: Modifier, placeholder: 
             fontSize = 3.2.em,
 
             )
-        /*Text(
-            text = text.uppercase(),
-            color = Color.White,
-            fontWeight = FontWeight(600),
-            fontFamily = FontFamily.Monospace,
-            fontSize = 4.5.em,
-        )*/
         AnimatedText(text = text.uppercase(), placeholder = placeholder, fontSize = 4.5.em)
     }
 }
 
 fun addBorder(isFocused: CardFocus, inputField: CardFocus): Modifier {
+
     return if (inputField == isFocused) {
         Modifier.border(BorderStroke(2.dp, Color.White), shape = RoundedCornerShape(10.dp))
     } else {
