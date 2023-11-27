@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,6 +40,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.zIndex
@@ -242,13 +244,46 @@ fun BackSide(viewModel: CardViewModel) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1.5f)
-        ) {}
+                .weight(1.8f)
+                .padding(horizontal = 18.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = "CVV",
+                    color = Color.White,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight(600),
+                    modifier = Modifier.padding(end = 4.dp)
+                )
+                Text(
+                    text = viewModel.cardCvv,
+                    fontFamily = FontFamily.Monospace,
+                    textAlign = TextAlign.End,
+                    fontWeight = FontWeight(600),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White, RoundedCornerShape(15))
+                        .padding(horizontal = 7.dp, vertical = 12.dp)
+                )
+            }
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1.5f)
-        ) {}
+                .weight(1.2f)
+                .padding(horizontal = 18.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Image(
+                painter = painterResource(id = viewModel.bankShown),
+                contentDescription = "backside bank",
+                modifier = Modifier.fillMaxHeight()
+            )
+        }
 
     }
 }
