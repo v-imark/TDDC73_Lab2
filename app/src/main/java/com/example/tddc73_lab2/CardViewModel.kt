@@ -2,7 +2,6 @@ package com.example.tddc73_lab2
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,8 +64,20 @@ class CardViewModel {
         currentFocus = boxToFocus
     }
 
+
     fun changeCardNumber(number: String) {
         cardNumber = number
+
+        var re = Regex("^4")
+        if (number.take(1).matches(re)) changeBankShown(R.drawable.visa)
+        re = Regex("^(34|37)")
+        if (number.take(2).matches(re)) changeBankShown(R.drawable.amex)
+        re = Regex("^5[1-5]")
+        if (number.take(2).matches(re)) changeBankShown(R.drawable.mastercard)
+        re = Regex("^6011")
+        if (number.take(4).matches(re)) changeBankShown(R.drawable.discover)
+        re = Regex("^9792")
+        if (number.take(4).matches(re)) changeBankShown(R.drawable.troy)
     }
 
     fun changeCardHolder(name: String) {
@@ -85,7 +96,7 @@ class CardViewModel {
         cardYear = year
     }
 
-    fun changeBankShown(bankRef: Int) {
+    private fun changeBankShown(bankRef: Int) {
         bankShown = bankRef
     }
 }

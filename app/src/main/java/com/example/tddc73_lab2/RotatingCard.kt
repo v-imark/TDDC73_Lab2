@@ -3,7 +3,6 @@ package com.example.tddc73_lab2
 //import androidx.compose.foundation.layout.ColumnScopeInstance.weight
 //import androidx.compose.foundation.layout.RowScopeInstance.weight
 import AnimatedLogo
-import android.text.Layout
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -15,7 +14,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,9 +41,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultCameraDistance
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -140,10 +136,12 @@ fun FrontSide(viewModel: CardViewModel) {
             requester.requestFocus()
         }
     }
-    AnimatedBorder(viewModel.currentFocus,
+    AnimatedBorder(
+        viewModel.currentFocus,
         cardNumberOffset, cardNumberSize,
         cardHolderOffset, cardHolderSize,
-        cardExpiresOffset, cardExpiresSize)
+        cardExpiresOffset, cardExpiresSize
+    )
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
@@ -159,17 +157,10 @@ fun FrontSide(viewModel: CardViewModel) {
             )
             AnimatedLogo(imageId = viewModel.bankShown)
         }
-
-        /*TextWithTitle(
-          title = "Card Number",
-          text = formatText(viewModel.cardNumber) ,
-            modifier = addBorder(CardFocus.CardNumber, viewModel.currentFocus).
-            fillMaxWidth().clickable { viewModel.setFocus(CardFocus.CardNumber) },
-        )*/
         AnimatedText(
-            text = formatText(viewModel.cardNumber),
-            placeholder = "#### #### #### ####",
-            fontSize =5.7.em,
+            text = formatText(viewModel.cardNumber, viewModel.bankShown),
+            placeholder = formatText("################", viewModel.bankShown),
+            fontSize = 5.7.em,
             modifier = addBorder(CardFocus.CardNumber, viewModel.currentFocus)
                 .onGloballyPositioned { coordinates ->
                     cardNumberSize = coordinates.size
@@ -182,7 +173,7 @@ fun FrontSide(viewModel: CardViewModel) {
                         viewModel.cardNumberFocusRequester
                     )
                 },
-            )
+        )
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             TextWithTitle(
                 title = "Card Holder",
@@ -212,9 +203,9 @@ fun FrontSide(viewModel: CardViewModel) {
                         handleFocus(CardFocus.CardExpires, viewModel.expiresFocusRequester)
                     }
                     .onGloballyPositioned { coordinates ->
-                cardExpiresSize = coordinates.size
-                cardExpiresOffset = coordinates.positionInRoot()
-                },
+                        cardExpiresSize = coordinates.size
+                        cardExpiresOffset = coordinates.positionInRoot()
+                    },
                 placeholder = "MM/YY"
             )
         }
