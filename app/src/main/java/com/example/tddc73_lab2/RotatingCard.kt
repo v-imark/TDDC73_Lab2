@@ -146,7 +146,7 @@ fun FrontSide(viewModel: CardViewModel) {
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxSize()
-            .padding(22.dp)
+            .padding(22.dp).zIndex(2f)
     ) {
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             Image(
@@ -161,7 +161,7 @@ fun FrontSide(viewModel: CardViewModel) {
             text = formatText(viewModel.cardNumber, viewModel.bankShown),
             placeholder = formatText("################", viewModel.bankShown),
             fontSize = 5.7.em,
-            modifier = addBorder(CardFocus.CardNumber, viewModel.currentFocus)
+            modifier = Modifier
                 .onGloballyPositioned { coordinates ->
                     cardNumberSize = coordinates.size
                     cardNumberOffset = coordinates.positionInRoot()
@@ -178,7 +178,7 @@ fun FrontSide(viewModel: CardViewModel) {
             TextWithTitle(
                 title = "Card Holder",
                 text = viewModel.cardHolder,
-                modifier = addBorder(CardFocus.CardHolder, viewModel.currentFocus)
+                modifier = Modifier
                     .weight(3f)
                     .fillMaxWidth()
                     .onGloballyPositioned { coordinates ->
@@ -198,7 +198,7 @@ fun FrontSide(viewModel: CardViewModel) {
             TextWithTitle(
                 title = "Expires",
                 text = "${viewModel.cardMonth.padStart(2, 'M')}/${viewModel.cardYear.takeLast(2)}",
-                modifier = addBorder(CardFocus.CardExpires, viewModel.currentFocus)
+                modifier = Modifier
                     .clickable {
                         handleFocus(CardFocus.CardExpires, viewModel.expiresFocusRequester)
                     }
@@ -230,14 +230,14 @@ fun TextWithTitle(title: String, text: String, modifier: Modifier, placeholder: 
     }
 }
 
-fun addBorder(isFocused: CardFocus, inputField: CardFocus): Modifier {
+/*fun addBorder(isFocused: CardFocus, inputField: CardFocus): Modifier {
 
     return if (inputField == isFocused) {
         Modifier.border(BorderStroke(2.dp, Color.White), shape = RoundedCornerShape(10.dp))
     } else {
         Modifier.border(BorderStroke(0.dp, Color.Transparent))
     }
-}
+}*/
 
 @Composable
 fun BackSide(viewModel: CardViewModel) {

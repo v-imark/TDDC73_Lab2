@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -91,9 +92,8 @@ fun AnimatedBorder(focus: CardFocus,
         modifier = Modifier
             .offset {
                offset
-            }
+            }.clip(RoundedCornerShape(10.dp))
             .size(((boxSize.width.dp)/3), ((boxSize.height.dp)/3))
-            .zIndex(3f)
             .background(Color(1, 1, 1, 150))
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -101,6 +101,8 @@ fun AnimatedBorder(focus: CardFocus,
             )
             {
                 moved = !moved
-            }
+            }.border( width = 3.dp,
+                color = Color.Gray,
+                shape = RoundedCornerShape(10.dp))
     )
 }
