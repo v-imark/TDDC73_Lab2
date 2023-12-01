@@ -62,6 +62,12 @@ class CardViewModel {
 
     fun setFocus(boxToFocus: CardFocus) {
         currentFocus = boxToFocus
+        if(CardFocus.CardNumber == boxToFocus)
+            cardNumberFocusRequester.requestFocus()
+        else if(CardFocus.CardHolder == boxToFocus)
+            cardHolderFocusRequester.requestFocus()
+        else if(CardFocus.CardExpires == boxToFocus)
+            expiresFocusRequester.requestFocus()
     }
 
 

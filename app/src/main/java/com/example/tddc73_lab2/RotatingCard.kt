@@ -81,8 +81,14 @@ fun RotatingCard(viewModel: CardViewModel) {
             .clip(RoundedCornerShape(8))
             .zIndex(1.0f)
             .clickable {
-                // When the card is clicked, focus the CardNumber text field
-                viewModel.setFocus(CardFocus.CardNumber)
+                // When the card is clicked, focus the CardNumber text field, click again removes focus
+                if(viewModel.currentFocus == CardFocus.NoFocus)
+                    viewModel.setFocus(CardFocus.CardNumber)
+
+                else{
+                    viewModel.setFocus(CardFocus.NoFocus)
+                    //viewModel.cardNumberFocusRequester.freeFocus()
+                }
             }
     ) {
         Image(
@@ -127,13 +133,13 @@ fun FrontSide(viewModel: CardViewModel) {
     var cardExpiresOffset by remember { mutableStateOf(Offset.Zero) }
 
 
-    fun handleFocus(cardFocus: CardFocus, requester: FocusRequester) {
+    fun handleFocus(cardFocus: CardFocus) {
         if (viewModel.currentFocus == cardFocus) {
             focusManager.clearFocus()
             viewModel.setFocus(CardFocus.NoFocus)
         } else {
             viewModel.setFocus(cardFocus)
-            requester.requestFocus()
+
         }
     }
     AnimatedBorder(
@@ -168,10 +174,7 @@ fun FrontSide(viewModel: CardViewModel) {
                 }
                 .padding(vertical = 7.dp, horizontal = 12.dp)
                 .clickable {
-                    handleFocus(
-                        CardFocus.CardNumber,
-                        viewModel.cardNumberFocusRequester
-                    )
+                    handleFocus(CardFocus.CardNumber)
                 },
         )
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
@@ -186,10 +189,7 @@ fun FrontSide(viewModel: CardViewModel) {
                         cardHolderOffset = coordinates.positionInRoot()
                     }
                     .clickable {
-                        handleFocus(
-                            CardFocus.CardHolder,
-                            viewModel.cardHolderFocusRequester
-                        )
+                        handleFocus(CardFocus.CardHolder)
                     },
                 placeholder = " ".padEnd(20)
 
@@ -200,7 +200,7 @@ fun FrontSide(viewModel: CardViewModel) {
                 text = "${viewModel.cardMonth.padStart(2, 'M')}/${viewModel.cardYear.takeLast(2)}",
                 modifier = Modifier
                     .clickable {
-                        handleFocus(CardFocus.CardExpires, viewModel.expiresFocusRequester)
+                        handleFocus(CardFocus.CardExpires)
                     }
                     .onGloballyPositioned { coordinates ->
                         cardExpiresSize = coordinates.size

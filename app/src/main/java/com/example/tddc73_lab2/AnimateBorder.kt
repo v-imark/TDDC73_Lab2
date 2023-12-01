@@ -57,19 +57,23 @@ fun AnimatedBorder(focus: CardFocus,
             outsidePad.toPx().toInt()-textPadHorz.toPx().toInt()
             , -outsidePad.toPx().toInt())
     }
-    //Create the correct offset for the animation
-    val offset by animateIntOffsetAsState(
-        targetValue =
+    fun getOffset():IntOffset {
+        var offset = IntOffset.Zero
         if (focus == CardFocus.CardNumber) {
             //Get position and add on the adjustment
-            IntOffset(numberOffset.x.toInt(), numberOffset.y.toInt())+adjustForPad
+            offset = IntOffset(numberOffset.x.toInt(), numberOffset.y.toInt())+adjustForPad
         }else if(focus == CardFocus.CardHolder) {
-            IntOffset(holderOffset.x.toInt(), holderOffset.y.toInt()) + adjustForPad
+            offset = IntOffset(holderOffset.x.toInt(), holderOffset.y.toInt()) + adjustForPad
         }else if(focus == CardFocus.CardExpires){
-            IntOffset(expiresOffset.x.toInt(), expiresOffset.y.toInt()) + adjustForPad
+            offset = IntOffset(expiresOffset.x.toInt(), expiresOffset.y.toInt()) + adjustForPad
         } else {
-            IntOffset(0, 0)
-        },
+            offset = IntOffset(numberOffset.x.toInt(), numberOffset.y.toInt())
+        }
+        return offset
+    }
+    //Create the correct offset for the animation
+    val offset by animateIntOffsetAsState(
+        targetValue = getOffset(),
         label = "offset"
     )
 
